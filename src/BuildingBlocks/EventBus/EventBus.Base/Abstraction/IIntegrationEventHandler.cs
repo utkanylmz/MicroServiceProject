@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 
 namespace EventBus.Base.Abstraction
 {
-    public interface IIntegrationEventHandler<TIntegrationEvent>:  IntegrationEventHandler 
-        where TIntegrationEvent:IntegrationEvent
+    public interface IIntegrationEventHandler<TIntegrationEvent>:  IntegrationEventHandler where TIntegrationEvent:IntegrationEvent
     {
         //IIntegrationEventHandler içerisine dinamik bir TIntegrationEvent tipi alıcak TIntegrationEvent tipi sadece
         //IntegrationEvent tipinde olmak zorunda. IntegrationEvent yarattığımız zaman IIntegrationEventHandler interfacesi

@@ -16,10 +16,10 @@ namespace EventBus.Base.Abstraction
         void Publish(IntegrationEvent @event);
         //Servicesimiz bir event fırlatacağı zaman bu Publish metodunu kullacak
 
-        void Subscribe<T,Th>() where T:IntegrationEvent where Th:IntegrationEventHandler;
+        void Subscribe<T,TH>() where T:IntegrationEvent where TH : IIntegrationEventHandler<T>;
         // RabbitMq'ya yada AzureServiceBus'a gideceğiz ilgili kanalları oluşturacaz o kanallları dinnlemeye başlayacağız,Consume
         //eden queueları consume eden metotları yazacağız bu subscribe işlemelerini geliştirmek için
         //IntegrationEvent,IntegrationEventHandler parametrelerini alacağız. 
-        void UnSubscribe<T,Th>() where T:IntegrationEvent where Th:IntegrationEventHandler;
+        void UnSubscribe<T,TH>() where T:IntegrationEvent where TH:IIntegrationEventHandler<T>;
     }
 }

@@ -73,22 +73,18 @@ namespace EventBus.Base.Events
 
 
 
-
-
-
         //Publish Subscribe UnSubscribe işlemlerinin Configürasyonları RabbitMQ'da ve AzureServiceBus'ta farklı uygulnacak diğer metotların
         // implemantasyonları her iki message brokerdada aynı aynı olduğu için onların metotlarının içi dolu 
+
         public abstract void Publish(IntegrationEvent @event);
 
-
-        public abstract void Subscribe<T, Th>()
+        public abstract void Subscribe<T, TH>()
             where T : IntegrationEvent
-            where Th : IntegrationEventHandler;
+            where TH : IIntegrationEventHandler<T>;
 
 
-        public abstract void UnSubscribe<T, Th>()
+        public abstract void UnSubscribe<T, TH>()
             where T : IntegrationEvent
-            where Th : IntegrationEventHandler;
-       
+            where TH : IIntegrationEventHandler<T>;
     }
 }

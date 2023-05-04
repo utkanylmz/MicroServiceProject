@@ -107,10 +107,10 @@ namespace EventBus.Base.SubManagers
             var handler = OnEventRemoved;
             handler?.Invoke(this, eventName);
         }
-        private SubscriptionInfo FindSubscriptionToRemove<T, Th>() where T : IntegrationEvent where Th : IIntegrationEventHandler<T>
+        private SubscriptionInfo FindSubscriptionToRemove<T, TH>() where T : IntegrationEvent where TH : IIntegrationEventHandler<T>
         {
             var eventName = GetEventKey<T>();
-            return FindSubscriptionToRemove(eventName, typeof(Th));
+            return FindSubscriptionToRemove(eventName, typeof(TH));
         }
 
         private SubscriptionInfo FindSubscriptionToRemove(string eventName, Type handlerType)
