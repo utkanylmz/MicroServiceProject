@@ -181,7 +181,7 @@ namespace EventBus.AzureServiceBus
             topicClient = null;
             managementClient = null;
             topicClient.CloseAsync().GetAwaiter().GetResult();
-            managementClient.CloseAsync();
+            managementClient.CloseAsync().GetAwaiter().GetResult() ;
         }
     }
 }
