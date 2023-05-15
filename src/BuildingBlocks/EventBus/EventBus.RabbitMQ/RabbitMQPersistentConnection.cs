@@ -14,29 +14,29 @@ namespace EventBus.RabbitMQ
 {
     public class RabbitMQPersistentConnection : IDisposable
     {
-        private readonly IConnectionFactory connectionFactory;
-        private readonly int retryCount;
+        private readonly IConnectionFactory _connectionFactory;
+        private readonly int _retryCount;
 
         //Hangi connection'ın açık olmadığını kontrol edeceğimiz connection
-        private IConnection connection;
+        private IConnection _connection;
         //Connection aktif mi değil mi? 
-        public bool IsConnected => connection != null && connection.IsOpen;
+        public bool IsConnected => _connection != null && _connection.IsOpen;
         private object lock_object = new object();
         private bool _disposed;
         public RabbitMQPersistentConnection(IConnectionFactory ConnectionFactory,int retryCount=5 )
         {
-            connectionFactory = ConnectionFactory;
-            this.retryCount = retryCount;
+           _connectionFactory = ConnectionFactory;
+            _retryCount = retryCount;
         }
        
         public IModel CreateModel()
         {
-            return connection.CreateModel();
+            return _connection.CreateModel();
         }
         public void Dispose()
         {
-            connection.Dispose();
             _disposed = true;
+            _connection.Dispose();
         }
 
         public bool TryConnect()
@@ -45,20 +45,20 @@ namespace EventBus.RabbitMQ
             {
                 var policy = Policy.Handle<SocketException>()
                     .Or<BrokerUnreachableException>()
-                    .WaitAndRetry(retryCount, retryattempt => TimeSpan.FromSeconds(Math.Pow(2, retryattempt)), (ex, time) =>
+                    .WaitAndRetry(_retryCount, retryattempt => TimeSpan.FromSeconds(Math.Pow(2, retryattempt)), (ex, time) =>
                     {
                     }
 
                 );
                 policy.Execute(() =>
                 {
-                    connection = connectionFactory.CreateConnection();
+                    _connection = _connectionFactory.CreateConnection();
                 });
                 if (IsConnected)
                 {
-                    connection.ConnectionShutdown += Connection_ConnectionShutdown;
-                    connection.CallbackException += Connection_CallbackException;
-                    connection.ConnectionBlocked += Connection_ConnectionBlocked;
+                    _connection.ConnectionShutdown += Connection_ConnectionShutdown;
+                    _connection.CallbackException += Connection_CallbackException;
+                    _connection.ConnectionBlocked += Connection_ConnectionBlocked;
                     return true;
                 }
                 return false;

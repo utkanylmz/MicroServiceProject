@@ -1,15 +1,35 @@
-var builder = WebApplication.CreateBuilder(args);
+using CatalogService.Api.Extensions;
+using CatalogService.Api.Infrastructure;
+using CatalogService.Api.Infrastructure.Context;
+using Microsoft.Extensions.FileProviders;
 
-// Add services to the container.
+var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+{
+    ContentRootPath = Directory.GetCurrentDirectory(),
+    WebRootPath = "Pics"
+});
+
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.Configure<CatalogSettings>(builder.Configuration.GetSection("CatalogSettings"));
+builder.Services.ConfigureDbContext(builder.Configuration);
+
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+app.MigrateDbContext<CatalogContext>((context, services) =>
+{
+    var env = services.GetService<IWebHostEnvironment>();
+    var logger = services.GetService<ILogger<CatalogContextSeed>>();
+
+    new CatalogContextSeed()
+    .SeedAsync(context, env, logger)
+    .Wait();
+});
+
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -17,6 +37,12 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseStaticFiles(new StaticFileOptions()
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(app.Environment.ContentRootPath, "Pics")),
+    RequestPath = "/pics"
+});
 
 app.UseAuthorization();
 
