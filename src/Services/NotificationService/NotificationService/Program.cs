@@ -1,30 +1,49 @@
-﻿using EventBus.Base.Abstraction;
+﻿using EventBus.Base;
+using EventBus.Base.Abstraction;
+using EventBus.Factory;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using NotificationService.IntegrationEvents.EventHandlers;
+using PaymentService.Api.IntegrationEvents.Events;
 
 internal class Program
 {
     private static void Main(string[] args)
     {
-       ServiceCollection services = new ServiceCollection();
+        ServiceCollection services = new ServiceCollection();
+        ConfigureServices(services);
+        var sp = services.BuildServiceProvider();
+        IEventBus eventBus = sp.GetRequiredService<IEventBus>();
+        eventBus.Subscribe<OrderPaymentSuccessIntegrationEvent, OrderPaymentSuccessIntegrationEventHandler>();
+        eventBus.Subscribe<OrderPaymentFailedIntegrationEvent, OrderPaymentFailedIntegrationEventHandler>();
+        Console.WriteLine("Application is Running .....");
+        Console.ReadLine();
 
     }
 
-    private void ConfigureServices(ServiceCollection services)
+    private static void ConfigureServices(ServiceCollection services)
     {
-       services.AddLogging(configure => configure.AddConsole());
-       services.AddTransient<OrderStartedIntegrationEventHandler>();
-       services.AddSingleton<IEventBus>(sp =>
+        services.AddLogging(configure =>
         {
-            var config = new EventBusConfig
-            {
-                ConnectionRetryCount = 5,
-                EventNameSuffix = "IntegrationEvent",
-                SubscriberClientAppName = "PaymentService",
-                EventBusType = EventBusType.RabbitMQ
-            };
+            configure.AddConsole();
 
-            return EventBusFactory.Create(config, sp);
         });
+
+        services.AddTransient<OrderPaymentSuccessIntegrationEventHandler>();
+        services.AddTransient<OrderPaymentFailedIntegrationEventHandler>();
+
+        services.AddSingleton<IEventBus>(sp =>
+         {
+             var config = new EventBusConfig
+             {
+                 ConnectionRetryCount = 5,
+                 EventNameSuffix = "IntegrationEvent",
+                 SubscriberClientAppName = "NotificationService",
+                 EventBusType = EventBusType.RabbitMQ
+             };
+
+             return EventBusFactory.Create(config, sp);
+         });
 
     }
 }
