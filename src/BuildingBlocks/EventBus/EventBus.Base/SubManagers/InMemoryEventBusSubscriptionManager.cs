@@ -12,7 +12,9 @@ namespace EventBus.Base.SubManagers
     {
         private readonly Dictionary<string, List<SubscriptionInfo>> _handlers;
         private readonly List<Type> _eventTypes;
-        public event EventHandler<string> OnEventRemoved;
+
+        public event EventHandler<string>? OnEventRemoved;
+
         public Func<string, string> eventNameGetter;
 
         //Func<string, string> eventNameGetter metodu parametre alma sebebi bize gelen Integration eventlerin örneğin
@@ -35,8 +37,10 @@ namespace EventBus.Base.SubManagers
         public void AddSubscription<T, TH>() where T : IntegrationEvent where TH : IIntegrationEventHandler<T>
         {
             var eventName = GetEventKey<T>();
+
             AddSubscription(typeof(TH), eventName);
-            if (_eventTypes.Contains(typeof(T)))
+
+            if (!_eventTypes.Contains(typeof(T)))
             {
                 _eventTypes.Add(typeof(T));
             }
@@ -49,14 +53,16 @@ namespace EventBus.Base.SubManagers
         private void AddSubscription(Type handlerType, string eventName)
         {
             //Bu metottaki temel amaç aynı evente birden fazla kez subscribe olmamak 
-            if (!HasSubscriptionForEvent(eventName))
+            if (!HasSubscriptionsForEvent(eventName))
             {
                 _handlers.Add(eventName, new List<SubscriptionInfo>());
             }
+
             if (_handlers[eventName].Any(s => s.HandlerType == handlerType))
             {
-                throw new ArgumentException($"Handler type {handlerType.Name} already registered for '{eventName}'", nameof(handlerType));
+                throw new ArgumentException($"Handler Type {handlerType.Name} already registered for '{eventName}'", nameof(eventName));
             }
+
             _handlers[eventName].Add(SubscriptionInfo.Typed(handlerType));
         }
 
@@ -72,6 +78,7 @@ namespace EventBus.Base.SubManagers
             if (subsToRemove != null)
             {
                 _handlers[eventName].Remove(subsToRemove);
+
                 if (!_handlers[eventName].Any())
                 {
                     _handlers.Remove(eventName);
@@ -80,6 +87,7 @@ namespace EventBus.Base.SubManagers
                     {
                         _eventTypes.Remove(eventType);
                     }
+
                     RaiseOnEventRemoved(eventName);
                 }
             }
@@ -91,7 +99,7 @@ namespace EventBus.Base.SubManagers
             return eventNameGetter(eventName);
         }
 
-        public Type GetEventTypeByName(string eventName) => _eventTypes.SingleOrDefault(t => t.Name == eventName);
+        public Type? GetEventTypeByName(string eventName) => _eventTypes.SingleOrDefault(t => t.Name == eventName);
 
         public IEnumerable<SubscriptionInfo> GetHandlersForEvent<T>() where T : IntegrationEvent
         {
@@ -100,14 +108,14 @@ namespace EventBus.Base.SubManagers
         }
 
         public IEnumerable<SubscriptionInfo> GetHandlersForEvent(string eventName) => _handlers[eventName];
-       
+
         //Eğer bir eventhandlerdan bir event silindiyse unsubscripte olduysa bu eventi kullananlara haber verir.
         private void RaiseOnEventRemoved(string eventName)
         {
             var handler = OnEventRemoved;
             handler?.Invoke(this, eventName);
         }
-        private SubscriptionInfo FindSubscriptionToRemove<T, TH>() where T : IntegrationEvent where TH : IIntegrationEventHandler<T>
+        private SubscriptionInfo? FindSubscriptionToRemove<T, TH>() where T : IntegrationEvent where TH : IIntegrationEventHandler<T>
         {
             var eventName = GetEventKey<T>();
             return FindSubscriptionToRemove(eventName, typeof(TH));
@@ -115,20 +123,17 @@ namespace EventBus.Base.SubManagers
 
         private SubscriptionInfo FindSubscriptionToRemove(string eventName, Type handlerType)
         {
-            if (!HasSubscriptionForEvent(eventName))
-            {
-                return null;
-            }
+            if (!HasSubscriptionsForEvent(eventName)) return null;
+
             return _handlers[eventName].SingleOrDefault(s => s.HandlerType == handlerType);
         }
 
-        public bool HasSubscriptionForEvent<T>() where T : IntegrationEvent
+        public bool HasSubscriptionsForEvent<T>() where T : IntegrationEvent
         {
             var key = GetEventKey<T>();
-            return HasSubscriptionForEvent(key);
+            return HasSubscriptionsForEvent(key);
         }
 
-        public bool HasSubscriptionForEvent(string eventName) => _handlers.ContainsKey(eventName);
-
+        public bool HasSubscriptionsForEvent(string eventName) => _handlers.ContainsKey(eventName);
     }
 }

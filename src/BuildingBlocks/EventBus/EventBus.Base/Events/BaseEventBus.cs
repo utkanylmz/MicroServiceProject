@@ -48,7 +48,7 @@ namespace EventBus.Base.Events
            //Bu event'in nameini ve mesajını alıyoruz.
             eventName = ProcessEventName(eventName);
             var processed = false;
-            if (SubsManager.HasSubscriptionForEvent(eventName))
+            if (SubsManager.HasSubscriptionsForEvent(eventName))
             {
                 var subscriptions = SubsManager.GetHandlersForEvent(eventName);
 
@@ -58,10 +58,12 @@ namespace EventBus.Base.Events
                     {
                         var handler = ServiceProvider.GetService(subscription.HandlerType);
                         if (handler == null) continue;
+                        
                         var eventType = SubsManager.GetEventTypeByName($"{EventBusConfig.EventNamePrefix}{eventName}{EventBusConfig.EventNameSuffix}");
                         var integrationEvent = JsonConvert.DeserializeObject(message, eventType);
+                       
                         var concreteType = typeof(IIntegrationEventHandler<>).MakeGenericType(eventType);
-                        await (Task)concreteType.GetMethod("Handle").Invoke(handler, new object[] { integrationEvent });
+                        await (Task)concreteType.GetMethod("Handler").Invoke(handler, new object[] { integrationEvent });
                     }
 
                 }
@@ -79,13 +81,9 @@ namespace EventBus.Base.Events
 
         public abstract void Publish(IntegrationEvent @event);
 
-        public abstract void Subscribe<T, TH>()
-            where T : IntegrationEvent
-            where TH : IIntegrationEventHandler<T>;
+        public abstract void Subscribe<T, TH>() where T : IntegrationEvent where TH : IIntegrationEventHandler<T>;
 
 
-        public abstract void UnSubscribe<T, TH>()
-            where T : IntegrationEvent
-            where TH : IIntegrationEventHandler<T>;
+        public abstract void UnSubscribe<T, TH>() where T : IntegrationEvent where TH : IIntegrationEventHandler<T>;
     }
 }

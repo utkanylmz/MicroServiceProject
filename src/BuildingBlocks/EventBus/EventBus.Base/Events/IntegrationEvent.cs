@@ -9,10 +9,16 @@ namespace EventBus.Base.Events
 {
     public class IntegrationEvent
     {
+
+
+        [JsonProperty]
+        public Guid Id { get; private set; }
+        [JsonProperty]
+        public DateTime CreatedDate { get; private set; }
         // IntegrationEvent : Sistemizde AzureServiceBus veya RabbitMQ aracılığı ile diğer servislere haber ulaştıran Eventlerdir.
         //IntegrationEvent mimarileride servisler arası iletişimde kullanılacak olan classlar/objeler olarak düşünebiliriz.
 
-       
+
         public IntegrationEvent()
         {
             Id = Guid.NewGuid();
@@ -28,9 +34,7 @@ namespace EventBus.Base.Events
             CreatedDate = createdDate;
         }
 
-        [JsonProperty]
-        public Guid Id { get;private set; }
-        public DateTime CreatedDate { get; private set; }
+      
         
     }
 }

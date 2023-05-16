@@ -2,7 +2,7 @@
 using EventBus.Base.Events;
 using PaymentService.Api.IntegrationEvents.Events;
 
-namespace PaymentService.Api.IntegrationEvents.EventsHandler
+namespace PaymentService.Api.IntegrationEvents.EventHandler
 {
     public class OrderStartedIntegrationEventHandler:IIntegrationEventHandler<OrderStartedIntegrationEvent>
     {
@@ -28,13 +28,12 @@ namespace PaymentService.Api.IntegrationEvents.EventsHandler
             string keyword = "PaymentSuccess";
             bool paymentSuccessFlag = _configuration.GetValue<bool>(keyword);
 
-            IntegrationEvent paymentEvent = paymentSuccessFlag ? new OrderPaymentSuccessIntegrationEvent(@event.OrderId)
-                                                             : new OrderPaymentFailedIntegrationEvent(@event.OrderId,"Error");
+            IntegrationEvent paymentEvent = paymentSuccessFlag
+                  ? new OrderPaymentSuccessIntegrationEvent(@event.OrderId)
+                  : new OrderPaymentFailedIntegrationEvent(@event.OrderId, "This is a fake error message");
             //Payment işlemi başarılı ise OrderPaymentSuccessIntegrationEvent'i değilse OrderPaymentFailedIntegrationEvent'i üret
             //Loggunu tutma işlemi
-            _logger.LogInformation($"OrderCreatedIntegrationEventHandler in PaymentService is fired with " +
-                $"PaymentSuccess: {paymentSuccessFlag}, orderId : {@event.OrderId}");
-
+            _logger.LogInformation($"OrderCreatedIntegrationEventHandler in PaymentService is fired with PaymentSuccess: {paymentSuccessFlag}, orderId: {@event.OrderId}");
             //Eventi Publish ediyoruz (eventbus'a gönderiyoruz).
             _eventBus.Publish(paymentEvent);
             return Task.CompletedTask;

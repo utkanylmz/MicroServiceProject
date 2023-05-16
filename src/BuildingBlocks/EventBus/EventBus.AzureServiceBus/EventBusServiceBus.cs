@@ -59,7 +59,7 @@ namespace EventBus.AzureServiceBus
         {
             var eventName = typeof(T).Name;
             eventName = ProcessEventName(eventName);
-            if (!SubsManager.HasSubscriptionForEvent(eventName))
+            if (!SubsManager.HasSubscriptionsForEvent(eventName))
             {
                 var subscriptionClient = CreateSubscriptionClientIfNotExists(eventName);
                 RegisterSubscriptionClientMessageHandler(subscriptionClient);

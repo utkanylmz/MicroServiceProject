@@ -15,27 +15,27 @@ namespace EventBus.RabbitMQ
     public class RabbitMQPersistentConnection : IDisposable
     {
         private readonly IConnectionFactory _connectionFactory;
-        private readonly int _retryCount;
-
-        //Hangi connection'ın açık olmadığını kontrol edeceğimiz connection
+        private readonly int retryCount;
         private IConnection _connection;
-        //Connection aktif mi değil mi? 
-        public bool IsConnected => _connection != null && _connection.IsOpen;
         private object lock_object = new object();
-        private bool _disposed;
-        public RabbitMQPersistentConnection(IConnectionFactory ConnectionFactory,int retryCount=5 )
+        public RabbitMQPersistentConnection(IConnectionFactory connectionFactory, int retryCount = 5)
         {
-           _connectionFactory = ConnectionFactory;
-            _retryCount = retryCount;
+            _connectionFactory = connectionFactory;
+            this.retryCount = retryCount;
         }
-       
+
+        private bool IsDisposed;
+        public bool IsConnected => _connection != null && _connection.IsOpen;
+        public bool IsConnection => _connection != null && _connection.IsOpen;
+
         public IModel CreateModel()
         {
             return _connection.CreateModel();
         }
+
         public void Dispose()
         {
-            _disposed = true;
+            IsDisposed = true;
             _connection.Dispose();
         }
 
@@ -43,45 +43,45 @@ namespace EventBus.RabbitMQ
         {
             lock (lock_object)
             {
-                var policy = Policy.Handle<SocketException>()
-                    .Or<BrokerUnreachableException>()
-                    .WaitAndRetry(_retryCount, retryattempt => TimeSpan.FromSeconds(Math.Pow(2, retryattempt)), (ex, time) =>
+                var policy = Policy.Handle<SocketException>().Or<BrokerUnreachableException>()
+                    .WaitAndRetry(retryCount, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)), (ex, time) =>
                     {
-                    }
 
-                );
+                    });
                 policy.Execute(() =>
                 {
                     _connection = _connectionFactory.CreateConnection();
                 });
                 if (IsConnected)
                 {
-                    _connection.ConnectionShutdown += Connection_ConnectionShutdown;
-                    _connection.CallbackException += Connection_CallbackException;
-                    _connection.ConnectionBlocked += Connection_ConnectionBlocked;
+                    _connection.ConnectionShutdown += _connection_ConnectionShutdown;
+                    _connection.CallbackException += _connection_CallbackException;
+                    _connection.ConnectionBlocked += _connection_ConnectionBlocked;
+                    //log
+
                     return true;
                 }
                 return false;
             }
         }
 
-        private void Connection_ConnectionBlocked(object? sender, ConnectionBlockedEventArgs e)
+        private void _connection_ConnectionBlocked(object? sender, global::RabbitMQ.Client.Events.ConnectionBlockedEventArgs e)
         {
-            if(_disposed) return;
-            TryConnect();
-            
+            if (!IsDisposed)
+                TryConnect();
         }
 
-        private void Connection_CallbackException(object? sender, CallbackExceptionEventArgs e)
+        private void _connection_CallbackException(object? sender, global::RabbitMQ.Client.Events.CallbackExceptionEventArgs e)
         {
-            if (_disposed) return;
-            TryConnect();
+            if (!IsDisposed)
+                TryConnect();
         }
 
-        private void Connection_ConnectionShutdown(object? sender, ShutdownEventArgs e)
+        private void _connection_ConnectionShutdown(object? sender, ShutdownEventArgs e)
         {
-            if (_disposed) return;
-            TryConnect();
+            //log Connection_ConnectionsShutdown
+            if (!IsDisposed)
+                TryConnect();
         }
     }
 }

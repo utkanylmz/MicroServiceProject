@@ -4,14 +4,15 @@ namespace PaymentService.Api.IntegrationEvents.Events
 {
     public class OrderPaymentFailedIntegrationEvent:IntegrationEvent
     {
-        public OrderPaymentFailedIntegrationEvent(int orderId, string errorMessage)
+
+        public int OrderId { get; }
+        public string ErrorMessage { get; }
+        public OrderPaymentFailedIntegrationEvent(int orderId, string errormessage)
         {
             OrderId = orderId;
-            ErrorMessage = errorMessage;
+            ErrorMessage = errormessage;
         }
 
-        public int OrderId { get;  }
-        public string ErrorMessage { get; }
 
     }
 }

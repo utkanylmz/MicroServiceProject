@@ -12,7 +12,7 @@ namespace EventBus.Base.Abstraction
         // IEventBus uygularımızın microserviceslerimizin hangi eventbus'ı subscript edeceğini söylediği söylediği bir event bus olacak
         //Bu eventbustan iki tanede ayrı eventbus çıkıyor.Biri RabbitMq biride AzureServiceBus bu iki eventbusta buraki metotları kullanacak
 
-
+   
         void Publish(IntegrationEvent @event);
         //Servicesimiz bir event fırlatacağı zaman bu Publish metodunu kullacak
 

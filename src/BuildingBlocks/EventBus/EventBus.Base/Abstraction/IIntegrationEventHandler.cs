@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EventBus.Base.Abstraction
 {
-    public interface IIntegrationEventHandler<TIntegrationEvent>:  IntegrationEventHandler where TIntegrationEvent:IntegrationEvent
+    public interface IIntegrationEventHandler<TIntegrationEvent>:  IntegrationEventHandlerBase where TIntegrationEvent:IntegrationEvent
     {
         //IIntegrationEventHandler içerisine dinamik bir TIntegrationEvent tipi alıcak TIntegrationEvent tipi sadece
         //IntegrationEvent tipinde olmak zorunda. IntegrationEvent yarattığımız zaman IIntegrationEventHandler interfacesi
@@ -16,7 +16,7 @@ namespace EventBus.Base.Abstraction
         Task Handler(TIntegrationEvent @event);
     }
 
-    public interface IntegrationEventHandler
+    public interface IntegrationEventHandlerBase
     {
         //MarkUp Interface
     }

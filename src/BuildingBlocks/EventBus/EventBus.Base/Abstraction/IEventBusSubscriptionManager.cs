@@ -18,9 +18,9 @@ namespace EventBus.Base.Abstraction
         void RemoveSubscription<T, TH>() where T : IntegrationEvent where TH : IIntegrationEventHandler<T>;
         //Subscription silme işlemi
 
-        bool HasSubscriptionForEvent<T>() where T : IntegrationEvent;
+        bool HasSubscriptionsForEvent<T>() where T : IntegrationEvent;
         //Dışarıdan bir event geldiğinde zaten bu event'i subscribe olup dinleyip dinlemediğimiz konrol eder
-        bool HasSubscriptionForEvent(string eventName);
+        bool HasSubscriptionsForEvent(string eventName);
         //Dışarıdan Eventin adi gönderildiğinde zaten bu event'i subscribe olup dinleyip dinlemediğimiz konrol eder
         Type GetEventTypeByName(string eventName);
         //event name gönderildiğinde onun typını geri göndericez

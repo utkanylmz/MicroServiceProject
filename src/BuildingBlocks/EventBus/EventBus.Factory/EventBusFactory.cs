@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace EventBus.Factory
 {
-    public class EventBusFactory
+    public static class EventBusFactory
     {
         public static IEventBus Create(EventBusConfig config, IServiceProvider serviceProvider)
         {
@@ -18,7 +18,7 @@ namespace EventBus.Factory
             return config.EventBusType switch
             {
                 EventBusType.AzureServiceBus => new EventBusServiceBus(config, serviceProvider),
-              _ => new EventBusRabbitMQ(config, serviceProvider)
+                _ => new EventBusRabbitMQ(config, serviceProvider),
             };
         }
     }

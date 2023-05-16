@@ -12,7 +12,7 @@ namespace EventBus.Base
         public int ConnectionRetryCount { get; set; } = 5;
         //RabbitMq-AzureServiceBus' a bağlanırken başarısız olursan 5 kere bağlanmayı dene
         public string DefaultTopicName { get; set; } = "UtkanEventBus";
-        
+
         public string EventBusConnectionString { get; set; } = String.Empty;
         public string SubscriberClientAppName { get; set; } = String.Empty;
         public string EventNamePrefix { get; set; } = String.Empty;
@@ -20,7 +20,7 @@ namespace EventBus.Base
         public string EventNameSuffix { get; set; } = "IntegrationEvent";
         public EventBusType EventBusType { get; set; } = EventBusType.RabbitMQ;
         //Dışarıdan EventBusType Gönderilmezse default olarak RabbitMQ ya bağlanılacak
-        public object Connection { get; set; }
+        public object? Connection { get; set; }
 
         public bool DeleteEventPrefix => !String.IsNullOrEmpty(EventNamePrefix);
         public bool DeleteEventSuffix => !String.IsNullOrEmpty(EventNameSuffix);
