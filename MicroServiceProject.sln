@@ -5,11 +5,6 @@ VisualStudioVersion = 17.5.33530.505
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{BE782335-BD7E-49DA-B780-97037D380143}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solutions Items", "Solutions Items", "{4D89C49A-15D2-4C69-A4BE-C29B12F9A127}"
-	ProjectSection(SolutionItems) = preProject
-		ServiceUrls.txt = ServiceUrls.txt
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApiGateway", "ApiGateway", "{B40A9BFC-822A-479A-B1FA-B949F4813CBC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BuildingBlocks", "BuildingBlocks", "{74342764-3C80-4633-B388-52ECF4605CC6}"
@@ -71,6 +66,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BuildingBlocks", "BuildingBlocks", "{17388FA0-3319-4727-AACB-A850320BDAD1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus.UnitTest", "Test\BuildingBlocks\EventBus.UnitTest\EventBus.UnitTest.csproj", "{AD96490B-F5DF-4A12-966E-406800BAB617}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E6D51717-4840-48A4-ABF7-FFD627FD1BCB}"
+	ProjectSection(SolutionItems) = preProject
+		ServiceUrls.txt = ServiceUrls.txt
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
