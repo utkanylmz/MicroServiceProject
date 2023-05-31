@@ -13,7 +13,7 @@ namespace IdentityService.Api.Application.Services
             var claims = new Claim[]
           {
             new(ClaimTypes.NameIdentifier,requestModel.UserName),
-            new(ClaimTypes.Name,"Utkan Yılmaz")
+            new(ClaimTypes.Name,"UtkanYilmaz")
           };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SecretKeyShouldBeLongSecretKeyShouldBeLong"));
